@@ -1,0 +1,95 @@
+---
+title: "STA308 Homework 4"
+author: "Will Paz"
+date: "2023-11-07"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# The Roulette Streaks Function
+
+```{r}
+roulette_streaks <- function(num_spins=600) {
+  
+  # "spin" will create a character vector filled with all of the
+  # outcomes of the user specified number of spins.
+  
+  roll <- sample(c("Black","Red","Green"),size=num_spins,
+                 prob=c(18/38,18/38,2/38),replace=TRUE)
+  
+  longest_streak <- 1 # Sets the longest streak to an initial value of 1.
+  current_streak <- 1 # Sets the current streak to an initial value of 1.
+  
+  # The following "for" loop will see if an outcome following another outcome
+  # are equal, and if so the current streak will increase by 1 each time
+  # this qualification is true, if not we return the current streak to 1.
+  
+  for(i in 1:num_spins) { 
+    last_outcome <- roll[1]
+    if (roll[i] == last_outcome) {
+      current_streak <- current_streak + 1
+    } else {
+      current_streak <- 1
+    }
+    
+    # Below, we are checking if the current streak if longer than
+    # the longest streak, and if so that current streak becomes the
+    # value for the longest streak.
+    
+    if (current_streak > longest_streak) {
+      longest_streak <- current_streak
+    }
+    
+    last_outcome <- roll[i] # After all of our checks, this line allows us
+                            # to repeat the process with the next outcome
+  }
+  
+  longest_streak # Returns the longest streak after all of spins are complete
+  
+}
+roulette_streaks()
+```
+
+# Simulating Roulette Streaks over 4 years (600 spins/day)
+
+```{r}
+set.seed(314159) # Sets a uniform outcome for each trial
+casino <- c() # Creates an empty vector
+
+# If we suppose each time we run "roulette_streaks" at 600 times spun as 
+# a day's worth of spins, the following "for" loop shows us the outcome 
+# of 1,500 days or approximately 4 years worth of spins.
+
+for(i in 1:1500) {
+  casino <- c(casino,roulette_streaks())
+}
+
+summary(casino) # Shows us a quantitative summary of the "for" loop
+hist(casino) # Creates a histogram of the data acquired
+```
+
+*As we look at the summary of the data, we can see that the median of the distribution is a streak of 9, and the mean of the distribution is 8.715 streaks. These two are similar and visually, we cannot state there us an apparent skew. Something to note, is that the streak of 2 stands out and is important to note because without the streak of one, the histogram appears to have a right skew, while the mean and median tell a different story.*
+
+# Simulating Roulette Streaks over 4 years (1,200 spins/day)
+
+```{r}
+set.seed(314159) # Sets a uniform outcome for each trial
+casino_2 <- c() # Creates an empty vector
+
+# Using the same logic as the above trial, instead of 600 spins in a day
+# we supposed that the casino speeds up the process to 1,200 spins a day over
+# the period of approximately 4 years.
+
+for(i in 1:1500)
+  casino_2 <- c(casino_2,roulette_streaks(1200))
+
+summary(casino_2) # Shows us a quantitative summary of the "for" loop
+hist(casino_2) # Creates a histogram of the data acquired
+```
+
+*The primary difference between the summary and histogram of the casino with 600 spins/day versus the casino with 1,200 spins a day is the mean. The casino with 1,200 spins/day has a larger mean as well as a larger median. The histograms look very similar, so it is important to look at the quantitative summary. Contextually, with an increase of spins per day there was also an increase in the length of the average streak per day.*
+
+
